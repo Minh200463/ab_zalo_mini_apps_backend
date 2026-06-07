@@ -25,6 +25,15 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: '- AntD2C',
+    },
+    components: {
+      graphics: {
+        Logo: '/components/Branding#Logo',
+        Icon: '/components/Branding#Icon',
+      },
+    },
   },
   collections: [Users, Media, Stores, Categories, Products, Customers],
   endpoints: [seedEndpoint, ...catalogEndpoints, ...authEndpoints],
