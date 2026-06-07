@@ -16,6 +16,17 @@ export const Products: CollectionConfig = {
     { name: 'title', type: 'text', required: true },
     slugField('title'),
     {
+      name: 'sku',
+      type: 'text',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Mã SKU — định danh duy nhất sản phẩm (FR-016). Duy nhất được đảm bảo ở seed/admin. ' +
+          '(Bật unique cấp DB sau khi dữ liệu cũ đã có SKU để tránh lỗi duplicate-null khi build index.)',
+      },
+    },
+    {
       name: 'gallery',
       type: 'array',
       labels: { singular: 'Ảnh', plural: 'Thư viện ảnh' },

@@ -1,5 +1,7 @@
 import type { PayloadRequest } from 'payload'
 
+import { ORDER_STATUS_LABELS, type OrderStatus } from './order'
+
 /** Origin của request hiện tại (để dựng URL ảnh tuyệt đối). */
 function origin(req: PayloadRequest): string {
   const fromEnv = process.env.SERVER_URL
@@ -50,6 +52,7 @@ export function toCategoryDTO(req: PayloadRequest, doc: any): CategoryDTO {
 
 export type ProductDTO = {
   id: string
+  sku: string
   name: string
   price: number
   originalPrice: number | null
@@ -71,6 +74,7 @@ export function toProductDTO(req: PayloadRequest, doc: any): ProductDTO {
     : []
   return {
     id: String(doc.id),
+    sku: doc.sku ?? '',
     name: doc.title,
     price: doc.price ?? 0,
     originalPrice: doc.compareAtPrice ?? null,
@@ -105,6 +109,99 @@ export function toCustomerDTO(_req: PayloadRequest, doc: any): CustomerDTO {
     email: doc.email ?? '',
     address: doc.address ?? '',
     defaultStoreId: ds ? String(typeof ds === 'object' ? ds.id : ds) : null,
+  }
+}
+
+export type CartItemDTO = { product: ProductDTO; quantity: number; lineTotal: number }
+export type CartDTO = {
+  id: string
+  storeId: string | null
+  items: CartItemDTO[]
+  subtotal: number
+  totalItems: number
+}
+
+/** Map cart doc (items.product đã populate) → DTO cho FE. lineTotal theo giá hiện hành. */
+export function toCartDTO(req: PayloadRequest, cart: any): CartDTO {
+  const rawItems = Array.isArray(cart?.items) ? cart.items : []
+  const items: CartItemDTO[] = rawItems
+    .filter((it: any) => it?.product && typeof it.product === 'object')
+    .map((it: any) => {
+      const product = toProductDTO(req, it.product)
+      const quantity = it.quantity ?? 1
+      return { product, quantity, lineTotal: product.price * quantity }
+    })
+  return {
+    id: String(cart?.id ?? ''),
+    storeId: cart?.store
+      ? String(typeof cart.store === 'object' ? cart.store.id : cart.store)
+      : null,
+    items,
+    subtotal: items.reduce((s, it) => s + it.lineTotal, 0),
+    totalItems: items.reduce((s, it) => s + it.quantity, 0),
+  }
+}
+
+export type OrderDTO = {
+  id: string
+  orderCode: string
+  status: string
+  statusLabel: string
+  paymentMethod: string
+  paymentStatus: string
+  items: {
+    productId: string
+    title: string
+    sku: string
+    price: number
+    quantity: number
+    lineTotal: number
+  }[]
+  delivery: { type: string; name: string; phone: string; address: string; stationId: string }
+  note: string
+  subtotal: number
+  discount: number
+  shippingFee: number
+  total: number
+  createdAt: string | null
+  statusHistory: { status: string; at: string | null }[]
+}
+
+export function toOrderDTO(_req: PayloadRequest, o: any): OrderDTO {
+  const d = o?.delivery ?? {}
+  const status = (o?.status ?? 'pending_confirm') as OrderStatus
+  return {
+    id: String(o?.id ?? ''),
+    orderCode: o?.orderCode ?? '',
+    status,
+    statusLabel: ORDER_STATUS_LABELS[status] ?? String(status),
+    paymentMethod: o?.paymentMethod ?? 'cod',
+    paymentStatus: o?.paymentStatus ?? 'unpaid',
+    items: (Array.isArray(o?.items) ? o.items : []).map((it: any) => ({
+      productId: String(it.productId ?? ''),
+      title: it.title ?? '',
+      sku: it.sku ?? '',
+      price: it.price ?? 0,
+      quantity: it.quantity ?? 0,
+      lineTotal: it.lineTotal ?? 0,
+    })),
+    delivery: {
+      type: d.type ?? 'shipping',
+      name: d.name ?? '',
+      phone: d.phone ?? '',
+      address: d.address ?? '',
+      stationId: d.stationId ?? '',
+    },
+    note: o?.note ?? '',
+    subtotal: o?.subtotal ?? 0,
+    discount: o?.discount ?? 0,
+    shippingFee: o?.shippingFee ?? 0,
+    total: o?.total ?? 0,
+    createdAt: o?.createdAt ?? null,
+    statusHistory: (Array.isArray(o?.statusHistory) ? o.statusHistory : []).map((h: any) => ({
+      status: h.status ?? '',
+      at: h.at ?? null,
+    })),
   }
 }
 

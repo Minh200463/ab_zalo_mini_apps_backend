@@ -12,9 +12,13 @@ import { Stores } from './collections/Stores'
 import { Categories } from './collections/Categories'
 import { Products } from './collections/Products'
 import { Customers } from './collections/Customers'
+import { Carts } from './collections/Carts'
+import { Orders } from './collections/Orders'
 import { seedEndpoint } from './endpoints/seed'
 import { catalogEndpoints } from './endpoints/catalog'
 import { authEndpoints } from './endpoints/auth'
+import { cartEndpoints } from './endpoints/cart'
+import { orderEndpoints } from './endpoints/orders'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -35,8 +39,14 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Stores, Categories, Products, Customers],
-  endpoints: [seedEndpoint, ...catalogEndpoints, ...authEndpoints],
+  collections: [Users, Media, Stores, Categories, Products, Customers, Carts, Orders],
+  endpoints: [
+    seedEndpoint,
+    ...catalogEndpoints,
+    ...authEndpoints,
+    ...cartEndpoints,
+    ...orderEndpoints,
+  ],
   cors: '*',
   plugins: [
     // Lưu ảnh lên S3 KHI có cấu hình S3_BUCKET; nếu không (dev local) dùng ổ đĩa.

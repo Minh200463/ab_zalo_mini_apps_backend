@@ -1,6 +1,6 @@
 import type { Endpoint, PayloadRequest } from 'payload'
 
-import { toCategoryDTO, toProductDTO, toStoreDTO } from '../lib/dto'
+import { mediaUrl, toCategoryDTO, toProductDTO, toStoreDTO } from '../lib/dto'
 
 const json = (data: unknown, status = 200) => Response.json(data, { status })
 const notFound = (msg = 'Not found') => json({ error: msg }, 404)
@@ -76,6 +76,29 @@ const storesNearestConfig: Endpoint = {
         .sort((a: any, b: any) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity))
     }
     return json(stores)
+  },
+}
+
+// GET /api/v1/stations  — điểm nhận hàng (pickup) = cửa hàng đang hoạt động (FR-035, BR-04.03).
+// Map store → Station shape mà FE đang dùng ({ id, name, image, address, location }).
+const stationsConfig: Endpoint = {
+  path: '/v1/stations',
+  method: 'get',
+  handler: async (req) => {
+    const result = await req.payload.find({
+      collection: 'stores',
+      where: { isActive: { equals: true } },
+      depth: 1,
+      limit: 100,
+    })
+    const stations = result.docs.map((d: any) => ({
+      id: String(d.id),
+      name: d.name,
+      address: d.address ?? '',
+      image: mediaUrl(req, d.logo, false) ?? '',
+      location: { lat: d.location?.lat ?? 0, lng: d.location?.lng ?? 0 },
+    }))
+    return json(stations)
   },
 }
 
@@ -189,10 +212,35 @@ const productDetailConfig: Endpoint = {
   },
 }
 
+// GET /api/v1/stores/:storeId/products/:productId/inventory  — tồn kho real-time (FR-020, NFR-05/09)
+export const inventoryConfig: Endpoint = {
+  path: '/v1/stores/:storeId/products/:productId/inventory',
+  method: 'get',
+  handler: async (req) => {
+    const storeId = param(req, 'storeId')
+    const productId = param(req, 'productId')
+    if (!storeId || !productId) return notFound()
+    try {
+      // depth:0 + đọc tươi từ DB (không cache) để phản ánh tồn kho hiện hành.
+      const doc = await req.payload.findByID({ collection: 'products', id: productId, depth: 0 })
+      const docStoreId = typeof doc.store === 'object' ? (doc.store as any)?.id : doc.store
+      if (String(docStoreId) !== String(storeId)) return notFound('Product not in store')
+      const inventory = (doc as any).inventory ?? 0
+      const inStock =
+        typeof (doc as any).inStock === 'boolean' ? (doc as any).inStock : inventory > 0
+      return json({ inStock, inventory })
+    } catch {
+      return notFound('Product not found')
+    }
+  },
+}
+
 // Thứ tự quan trọng:
 // - /v1/stores và /v1/stores/nearest đứng TRƯỚC /v1/stores/:storeId
 // - search đứng trước productDetail để "search" không bị bắt như :productId
+// - inventory (2 segment sau products) tách biệt với :productId (1 segment)
 export const catalogEndpoints: Endpoint[] = [
+  stationsConfig,
   storesListConfig,
   storesNearestConfig,
   storeConfig,
@@ -200,5 +248,6 @@ export const catalogEndpoints: Endpoint[] = [
   categoriesConfig,
   productsByCategoryConfig,
   searchConfig,
+  inventoryConfig,
   productDetailConfig,
 ]
