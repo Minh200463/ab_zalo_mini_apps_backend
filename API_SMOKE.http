@@ -1,0 +1,26 @@
+### Smoke test API /api/v1 (dùng với REST Client / VS Code)
+### storeId seed demo:
+@base = http://localhost:3000/api/v1
+@storeId = 6a251f946de21f756be8a239
+@categoryId = REPLACE_FROM_categories_endpoint
+
+### (re)seed dữ liệu — thêm ?force=1 để seed lại
+POST http://localhost:3000/api/seed
+
+### 1) Thông tin cửa hàng (FR-007)
+GET {{base}}/stores/{{storeId}}
+
+### 2) Banner (FR-008)
+GET {{base}}/stores/{{storeId}}/banners
+
+### 3) Danh mục theo cửa hàng (FR-009/011)
+GET {{base}}/stores/{{storeId}}/categories
+
+### 4) Sản phẩm theo danh mục — phân trang (FR-012/014, NFR-15)
+GET {{base}}/stores/{{storeId}}/categories/{{categoryId}}/products?page=1&limit=20
+
+### 5) Tìm kiếm sản phẩm (FR-013)
+GET {{base}}/stores/{{storeId}}/products/search?q=Trái&limit=20
+
+### 6) Chi tiết sản phẩm (FR-015..019) — thay :productId bằng id thật
+GET {{base}}/stores/{{storeId}}/products/REPLACE_PRODUCT_ID

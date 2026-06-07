@@ -1,0 +1,44 @@
+{
+  "name": "antbuddy-zalo-backend",
+  "version": "0.1.0",
+  "description": "Backend Payload cho Zalo Mini App TMĐT (AntBuddy)",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "devsafe": "rm -rf .next && next dev",
+    "build": "next build",
+    "start": "next start",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "payload": "payload"
+  },
+  "dependencies": {
+    "@payloadcms/db-mongodb": "3.85.0",
+    "@payloadcms/next": "3.85.0",
+    "@payloadcms/richtext-lexical": "3.85.0",
+    "@payloadcms/storage-s3": "3.85.0",
+    "@payloadcms/ui": "3.85.0",
+    "graphql": "^16.8.1",
+    "next": "15.4.11",
+    "payload": "3.85.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.0",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.9.0",
+    "pnpm": "^9 || ^10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
+  }
+}
