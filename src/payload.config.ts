@@ -31,7 +31,11 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     meta: {
-      titleSuffix: '- AntD2C',
+      titleSuffix: ' - AntD2C',
+      description: 'AntD2C is a headless CMS and application framework built with TypeScript, Node.js, and React.',
+      openGraph: {
+        description: 'AntD2C is a headless CMS and application framework built with TypeScript, Node.js, and React.',
+      },
       icons: [
         {
           rel: 'icon',
