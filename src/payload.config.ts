@@ -32,6 +32,13 @@ export default buildConfig({
     },
     meta: {
       titleSuffix: '- AntD2C',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/ant_logo.png',
+        },
+      ],
     },
     components: {
       graphics: {
