@@ -313,6 +313,7 @@ export const seedEndpoint: Endpoint = {
             collection: 'products',
             data: {
               title: prodSeed.name,
+              sku: `SKU-S${s + 1}-${String(count).padStart(4, '0')}`,
               gallery: [{ image: prodImageId }],
               price: base,
               ...(hasDiscount ? { compareAtPrice: base + 10000 } : {}),

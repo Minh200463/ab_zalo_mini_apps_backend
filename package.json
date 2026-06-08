@@ -11,7 +11,9 @@
     "start": "next start",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
-    "payload": "payload"
+    "payload": "payload",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "3.85.0",
@@ -30,7 +32,8 @@
     "@types/node": "^22.5.4",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.8"
   },
   "engines": {
     "node": ">=20.9.0",
