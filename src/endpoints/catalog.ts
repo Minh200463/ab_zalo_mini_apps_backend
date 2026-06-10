@@ -180,7 +180,12 @@ const searchConfig: Endpoint = {
     const page = Number(queryStr(req, 'page')) || 1
     const limit = Number(queryStr(req, 'limit')) || 20
     const where: any = q
-      ? { and: [{ store: { equals: storeId } }, { title: { like: q } }] }
+      ? {
+          and: [
+            { store: { equals: storeId } },
+            { or: [{ title: { like: q } }, { sku: { like: q } }] },
+          ],
+        }
       : { store: { equals: storeId } }
     const result = await req.payload.find({ collection: 'products', where, depth: 2, page, limit })
     return json({

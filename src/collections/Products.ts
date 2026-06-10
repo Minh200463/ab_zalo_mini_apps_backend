@@ -11,6 +11,7 @@ export const Products: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'price', 'inStock', 'store'],
     group: 'Sản phẩm',
+    listSearchableFields: ['title', 'sku'],
   },
   fields: [
     { name: 'title', type: 'text', required: true },
