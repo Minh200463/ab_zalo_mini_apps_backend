@@ -11,6 +11,8 @@
     "start": "next start",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
+    "dump:seed": "node scripts/dump-seed.cjs",
+    "restore:seed": "node scripts/restore-seed.cjs",
     "payload": "payload",
     "test": "vitest run",
     "test:watch": "vitest"
