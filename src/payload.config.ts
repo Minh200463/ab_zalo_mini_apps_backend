@@ -19,6 +19,7 @@ import { catalogEndpoints } from './endpoints/catalog'
 import { authEndpoints } from './endpoints/auth'
 import { cartEndpoints } from './endpoints/cart'
 import { orderEndpoints } from './endpoints/orders'
+import { paymentEndpoints } from './endpoints/payments'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -46,6 +47,7 @@ export default buildConfig({
     ...authEndpoints,
     ...cartEndpoints,
     ...orderEndpoints,
+    ...paymentEndpoints,
   ],
   cors: '*',
   plugins: [

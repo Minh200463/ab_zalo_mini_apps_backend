@@ -77,6 +77,10 @@ export const Orders: CollectionConfig = {
       defaultValue: 'pending_confirm',
       index: true,
     },
+    // Thanh toán ZaloPay — fields lưu kết quả từ Checkout SDK callback (P10).
+    { name: 'zpOrderId', type: 'text', index: true, admin: { description: 'orderId từ Checkout SDK' } },
+    { name: 'zpTransId', type: 'text', admin: { description: 'transId từ callback' } },
+    { name: 'paidAt', type: 'date', admin: { description: 'Thời gian thanh toán thành công' } },
     {
       name: 'statusHistory',
       type: 'array',

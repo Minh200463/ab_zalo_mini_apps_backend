@@ -165,6 +165,9 @@ export type OrderDTO = {
   total: number
   createdAt: string | null
   statusHistory: { status: string; at: string | null }[]
+  zpOrderId: string | null
+  zpTransId: string | null
+  paidAt: string | null
 }
 
 export function toOrderDTO(_req: PayloadRequest, o: any): OrderDTO {
@@ -202,6 +205,9 @@ export function toOrderDTO(_req: PayloadRequest, o: any): OrderDTO {
       status: h.status ?? '',
       at: h.at ?? null,
     })),
+    zpOrderId: o?.zpOrderId ?? null,
+    zpTransId: o?.zpTransId ?? null,
+    paidAt: o?.paidAt ?? null,
   }
 }
 
