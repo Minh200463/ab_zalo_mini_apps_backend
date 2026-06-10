@@ -13,6 +13,30 @@ export const Orders: CollectionConfig = {
     update: ({ req }) => !!req.user,
     delete: ({ req }) => !!req.user,
   },
+  hooks: {
+    beforeChange: [
+      ({ data, originalDoc }) => {
+        if (data.status) {
+          const now = new Date().toISOString()
+          const newEntry = { status: data.status, at: now }
+          if (!originalDoc) {
+            if (!Array.isArray(data.statusHistory) || data.statusHistory.length === 0) {
+              data.statusHistory = [newEntry]
+            }
+          } else if (data.status !== originalDoc.status) {
+            const history = Array.isArray(originalDoc.statusHistory)
+              ? [...originalDoc.statusHistory]
+              : []
+            if (history.length === 0 || history[history.length - 1]?.status !== data.status) {
+              history.push(newEntry)
+            }
+            data.statusHistory = history
+          }
+        }
+        return data
+      },
+    ],
+  },
   admin: {
     useAsTitle: 'orderCode',
     defaultColumns: ['orderCode', 'customer', 'store', 'status', 'paymentStatus', 'total'],
