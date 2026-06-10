@@ -17,6 +17,7 @@ export const Stores: CollectionConfig = {
     slugField('name'),
     { name: 'address', type: 'text' },
     { name: 'phone', type: 'text' },
+    { name: 'openingHours', type: 'text', label: 'Giờ mở cửa' },
     {
       name: 'location',
       type: 'group',

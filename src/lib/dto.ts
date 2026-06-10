@@ -217,6 +217,7 @@ export function toStoreDTO(req: PayloadRequest, doc: any) {
     name: doc.name,
     address: doc.address ?? null,
     phone: doc.phone ?? null,
+    openingHours: doc.openingHours ?? null,
     logo: mediaUrl(req, doc.logo, false),
     banners: Array.isArray(doc.banners)
       ? doc.banners.map((b: any) => mediaUrl(req, b.image, false)).filter(Boolean)
